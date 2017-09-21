@@ -157,7 +157,7 @@ function create_config() {
 #
 function create_templates() {
   echo "Creating templates"
-  local image_params="IMAGE_VERSION_DEFAULT=${image_version},IMAGE_PREFIX_DEFAULT=${image_prefix}"
+  #local image_params="IMAGE_VERSION_DEFAULT=${image_version} --param IMAGE_PREFIX_DEFAULT=${image_prefix}"
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[storage-nodeselector]:-})" \
            templates/es.yaml | oc process -f -  \
@@ -166,7 +166,8 @@ function create_templates() {
            --param "ES_RECOVER_AFTER_NODES=${es_recover_after_nodes}" \
            --param "ES_RECOVER_EXPECTED_NODES=${es_recover_expected_nodes}" \
            --param "ES_RECOVER_AFTER_TIME=${es_recover_after_time}" \
-           --param "$image_params" \
+           --param "IMAGE_VERSION_DEFAULT=${image_version}" \
+		   --param "IMAGE_PREFIX_DEFAULT=${image_prefix}" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
@@ -174,7 +175,8 @@ function create_templates() {
            templates/curator.yaml | oc process -f - \
            --param "ES_HOST=apiman-storage" \
            --param "MASTER_URL=${master_url}" \
-           --param "$image_params" \
+           --param "IMAGE_VERSION_DEFAULT=${image_version}" \
+		   --param "IMAGE_PREFIX_DEFAULT=${image_prefix}" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
@@ -182,14 +184,16 @@ function create_templates() {
            templates/console.yaml | oc process -f - \
            --param "PUBLIC_MASTER_URL=${public_master_url}" \
            --param "GATEWAY_PUBLIC_HOSTNAME=${gateway_hostname}" \
-           --param "$image_params" \
+           --param "IMAGE_VERSION_DEFAULT=${image_version}" \
+		   --param "IMAGE_PREFIX_DEFAULT=${image_prefix}" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[gateway-nodeselector]:-})" \
            templates/gateway.yaml | oc process -f - \
            --param "ES_HOST=apiman-storage" \
-           --param "$image_params" \
+           --param "IMAGE_VERSION_DEFAULT=${image_version}" \
+		   --param "IMAGE_PREFIX_DEFAULT=${image_prefix}" \
            | oc create -f -
 
   oc new-app -f templates/support.yaml \
