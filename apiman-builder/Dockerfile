@@ -12,7 +12,7 @@ RUN yum install -y --setopt=tsflags=nodocs epel-release \
                 java-1.8.0-openjdk java-1.8.0-openjdk-devel docker jq && \
     yum clean all
 ADD install.sh ${HOME}/
-RUN chmod +x ${HOME}/install.sh
+RUN chmod +x ${HOME}/install.sh \
  && ${HOME}/install.sh
 
 ADD build.sh ${HOME}/
