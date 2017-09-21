@@ -161,35 +161,35 @@ function create_templates() {
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[storage-nodeselector]:-})" \
            templates/es.yaml | oc process -f -  \
-           --value "ES_INSTANCE_RAM=${es_instance_ram}" \
-           --value "ES_NODE_QUORUM=${es_node_quorum}" \
-           --value "ES_RECOVER_AFTER_NODES=${es_recover_after_nodes}" \
-           --value "ES_RECOVER_EXPECTED_NODES=${es_recover_expected_nodes}" \
-           --value "ES_RECOVER_AFTER_TIME=${es_recover_after_time}" \
-           --value "$image_params" \
+           --param "ES_INSTANCE_RAM=${es_instance_ram}" \
+           --param "ES_NODE_QUORUM=${es_node_quorum}" \
+           --param "ES_RECOVER_AFTER_NODES=${es_recover_after_nodes}" \
+           --param "ES_RECOVER_EXPECTED_NODES=${es_recover_expected_nodes}" \
+           --param "ES_RECOVER_AFTER_TIME=${es_recover_after_time}" \
+           --param "$image_params" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[curator-nodeselector]:-})" \
            templates/curator.yaml | oc process -f - \
-           --value "ES_HOST=apiman-storage" \
-           --value "MASTER_URL=${master_url}" \
-           --value "$image_params" \
+           --param "ES_HOST=apiman-storage" \
+           --param "MASTER_URL=${master_url}" \
+           --param "$image_params" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[console-nodeselector]:-})" \
            templates/console.yaml | oc process -f - \
-           --value "PUBLIC_MASTER_URL=${public_master_url}" \
-           --value "GATEWAY_PUBLIC_HOSTNAME=${gateway_hostname}" \
-           --value "$image_params" \
+           --param "PUBLIC_MASTER_URL=${public_master_url}" \
+           --param "GATEWAY_PUBLIC_HOSTNAME=${gateway_hostname}" \
+           --param "$image_params" \
            | oc create -f -
 
   sed "/serviceAccountName/ i\
 \          $(os::int::deploy::extract_nodeselector ${input_vars[gateway-nodeselector]:-})" \
            templates/gateway.yaml | oc process -f - \
-           --value "ES_HOST=apiman-storage" \
-           --value "$image_params" \
+           --param "ES_HOST=apiman-storage" \
+           --param "$image_params" \
            | oc create -f -
 
   oc new-app -f templates/support.yaml \
