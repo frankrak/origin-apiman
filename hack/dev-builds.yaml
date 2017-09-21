@@ -236,7 +236,7 @@ parameters:
 -
   description: 'URL for origin-apiman fork'
   name: APIMAN_FORK_URL
-  value: https://github.com/openshift/origin-apiman
+  value: https://github.com/frankrak/origin-apiman
 -
   description: 'branch for origin-apiman fork'
   name: APIMAN_FORK_BRANCH
