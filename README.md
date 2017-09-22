@@ -61,3 +61,40 @@ so that the deployer will run with the built image.
 
 Dev builds can be tested with the e2e script. See the [testing
 README](./hack/testing/README) for details.
+
+# quick setup steps 
+## delete previous builds
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-builder
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-console 
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-deployer
+oc delete images,builds,bc,imageStream --namespace=openshift -l app=apiman-elasticsearch
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-elasticsearch
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-gateway
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=apiman-curator
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=centos 
+oc delete images,builds,bc,imageStream --namespace=openshift -l build=origin
+
+## install app in namespace openshift
+oc new-app -n openshift -f \data\git\onetrail\origin-apiman\hack\dev-builds.yaml
+
+## get namespace prefix from openshift
+oc get is -n openshift
+```
+NAME                   DOCKER REPO                                         TAGS                             UPDATED
+apiman-builder         172.30.35.237:5000/openshift/apiman-builder
+apiman-console         172.30.35.237:5000/openshift/apiman-console
+....
+```
+will result in prefix: **172.30.35.237:5000/openshift/**
+
+## creating / updating  missing templates
+oc apply -n openshift -f https://raw.githubusercontent.com/openshift/origin-apiman/master/deployer/deployer.yaml
+
+## create service accounts
+oc new-app apiman-deployer-account-template
+
+## give correct permissions for apiman-console system account
+oadm policy add-cluster-role-to-user cluster-reader system:serviceaccount:**<project name>**:apiman-console
+
+## run deployer with reinstall to remove old components. default is install
+oc new-app apiman-deployer-template -n a1 --param IMAGE_PREFIX=**172.30.35.237:5000/openshift/** --PARAM MODE=reinstall
