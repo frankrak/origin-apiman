@@ -244,7 +244,7 @@ parameters:
 -
   description: 'URL for fabric8-ipaas fork'
   name: F8_FORK_URL
-  value: https://github.com/fabric8io/fabric8-ipaas
+  value: https://github.com/frankrak/fabric8-ipaas
 -
   description: 'branch for fabric8-ipaas fork'
   name: F8_FORK_BRANCH
